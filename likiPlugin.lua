@@ -37,7 +37,7 @@ local function compile(...)
 		end
 		plugin:SetSetting("compileFunction", nil)
 	end
-	
+
 	if module.luau_compile then
 		return module.luau_compile(...);
 	elseif module.Compile then
@@ -122,7 +122,7 @@ local function saveCompilerFile()
 					warn("Did not save correctly!")
 				end
 			end)
-			
+
 			for i,v in next, workspace:GetDescendants() do
 				if v:IsA("StringValue") and v.Name:match("%.liki$") and v:FindFirstChild("ByteCode") then 
 					task_defer(function()
@@ -146,9 +146,9 @@ local function AddUpdateSource(liki : StringValue)
 	pcall(function()
 		local script = liki:WaitForChild("Script").Value;
 		local byteCode = liki:WaitForChild("ByteCode");
-		
+
 		local line = 0;
-		
+
 		local thread = task_defer(function()
 			while task_wait(5) do
 				local ticket = line + 1;
@@ -159,14 +159,14 @@ local function AddUpdateSource(liki : StringValue)
 				script:GetPropertyChangedSignal("Source"):Wait();
 			end
 		end)
-		
+
 		local connection = liki.Changed:Connect(function(v)
 			task_wait(.1)
 			if v ~= script.Source then
 				update(liki, script, byteCode);
 			end
 		end)
-		
+
 		local connection2; connection2 = liki.AncestryChanged:Connect(function(_, p)
 			if p == nil then
 				connection:Disconnect();
@@ -178,14 +178,16 @@ local function AddUpdateSource(liki : StringValue)
 	end)
 end
 
-pcall(function()
-	latestVersion = (pageSource:match(pattern));
+task_delay(2, function()
+	pcall(function()
+		latestVersion = (pageSource:match(pattern));
 
-	if plugin:GetSetting("module") then
-		module = loadstring(plugin:GetSetting("module"))()
-	else
-		warn("No compiler found!")
-	end
+		if plugin:GetSetting("module") then
+			module = loadstring(plugin:GetSetting("module"))()
+		else
+			warn("No compiler found!")
+		end
+	end)
 end)
 
 task_wait(1)
@@ -200,7 +202,7 @@ task_wait(1)
 
 local button1, button2 = 
 	toolbar:CreateButton("Open Menu for LIKI", "openMenuLiki", "rbxassetid://12967351548", "Open Menu for LIKI"),
-	toolbar:CreateButton("Setup Simulation", "setupLiki", "rbxassetid://12974220219", "Setups the LIKI simulation")
+toolbar:CreateButton("Setup Simulation", "setupLiki", "rbxassetid://12974220219", "Setups the LIKI simulation")
 
 button1.Click:Connect(function()
 	menu:ShowAsync()
@@ -253,7 +255,7 @@ if RunService:IsRunning() and RunService:IsClient() then
 		menu:AddAction(playAction)
 		menu:AddAction(pausesAction)
 	end;
-else
+elseif RunService:IsRunning() == false then
 	-- real-time source updater
 	for i,v in next, workspace:GetDescendants() do
 		if v:IsA("StringValue") and v.Name:match("%.liki$") and v:FindFirstChild("ByteCode") then 
