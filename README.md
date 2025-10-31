@@ -9,3 +9,5 @@ you can change the interpreter to the one that actually works with your compiler
 
 anyhow, thats how it works.
 check the "pausePlay" module for the API details
+
+btw this was meant for luauCeption, but you can use LuauInLuau instead since that one actually works
